@@ -12,6 +12,7 @@ from flask import (
 
 from extensions import mysql, bcrypt
 from utils import validar_senha, validar_email, gerar_token_verificacao, hash_token_verificacao
+from services.email_service import enviar_email_verificacao
 
 import logging
 logger = logging.getLogger(__name__)
@@ -134,6 +135,9 @@ def cadastrar():
 
         cur.execute("INSERT INTO empresas (usuario_id, nome, identificador_url) VALUES (%s, %s, %s)", (usuario_id, nome, identificador))
         mysql.connection.commit()
+        
+        enviar_email_verificacao(email, token)
+        
         logger.info("Usuário %s cadastrou a empresa %s", email, identificador)
         
     except Exception:
